@@ -21,7 +21,7 @@ cin>>k;
             return 0;
         }
     }
-    cout<<"not found"<<endl;
  }
+ cout<<"not found"<<endl;
 
  }

@@ -14,15 +14,15 @@ char temp[100];
 cin.getline(temp,100);
 
 for(int i=0;i<n;i++){
-    bool found = true;
+    //bool found = true;
     int j;
     for(j=0;arr[i][j]!='\0' && temp[j]!='\0';j++){
         if(arr[i][j]!=temp[j]){
-            found = false;
+            //found = false;
             break;
         }
 }
-    if(found && arr[i][j]=='\0' && temp[j]=='\0'){
+    if(arr[i][j]=='\0' && temp[j]=='\0'){
         cout<<"found"<<endl;
         return 0;
     }
