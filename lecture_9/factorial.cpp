@@ -9,6 +9,6 @@ int factorial(int n){
     return x*n;
 }
 int main(){
-cout<<factorial(4)<<endl;;
+cout<<factorial(4)<<endl;
 }
 

@@ -32,8 +32,18 @@ int last_7(int arr[100],int n,int index){
     }
     return -1;
 }
+void all_7(int arr[10],int n,int index){
+    if(index==n){
+        return;
+    }
+    all_7(arr,n,index+1);
+    if(arr[index]==7){
+        cout<<index<<" ";
+    }
+    return;
+}
 int main(){
 int arr[10]  = {1,7,99,7,9};
-cout<<last_7(arr,5,0);
+all_7(arr,5,0);
 
 }
