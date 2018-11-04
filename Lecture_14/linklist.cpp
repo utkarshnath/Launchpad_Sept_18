@@ -283,16 +283,65 @@ node * mergeLL(node * head1,node * head2){
     }
     return head;
 }
+node * mergeSort(node * head,int start,int end){
+    if(start>end){
+        return NULL;
+    }
+    if(start==end){
+        return head;
+    }
+    int mid = (start+end)/2;
+    node * midNode = findAtPositionK(head,mid);
+    node * head1 = head;
+    node * head2 = midNode->next;
+    midNode->next = NULL;
+     head1 = mergeSort(head1,start,mid);
+    head2 = mergeSort(head2,0,end-mid-1);
+    head = mergeLL(head1,head2);
+    return head;
+}
+node * reversell(node * head,node *& tail){
+    if(head->next==NULL){
+        tail = head;
+        tail->next = NULL;
+        return head;
+    }
+    node * newhead =  reversell(head->next,tail);
+    tail->next = head;
+    tail = head;
+    tail->next = NULL;
+    return newhead;
+}
+pair<node*,node *> reversell2(node * head){
+    if(head->next==NULL){
+        pair<node*,node*> p ;
+        p.first = head;
+        p.second = head;
+        return p;
+    }
+    pair <node *,node *>p = reversell2(head->next);
+    node * tail = p.second;
+    tail->next = head;
+    tail = head;
+    tail->next = NULL;
+    p.second = tail;
+    return p;
+}
 int main(){
 node * head1 = NULL;
 node * head2 = NULL;
 //print(head);
 createll2(head1);
 print(head1);
-createll2(head2);
-print(head2);
-node * head3 = mergeLL(head1,head2);
-print(head3);
+node * tail = 0;
+head1 = reversell(head1,tail);
+print(head1);
+pair <node *,node *>p = reversell2(head1);
+print(p.first);
+/*
+int n = length(head1);
+head1 = mergeSort(head1,0,n-1);
+print(head1);
 
 //bubbleSort(&head);
 //int n = 2;
