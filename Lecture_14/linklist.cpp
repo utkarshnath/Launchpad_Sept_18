@@ -178,6 +178,14 @@ node * findAtPositionK(node *  head,int k){
     return head;
 }
 void swapNode(node ** head,int i,int j){
+    if(i==0 && j==1){
+        // fill this
+        node * temp = *head;
+        *head = temp->next;
+        temp->next = (*head)->next;
+        (*head)->next = temp;
+        return;
+    }
     if(i==0){
         node * parent = findAtPositionK(*head,j-1);
         node * a = *head;
@@ -199,6 +207,7 @@ void swapNode(node ** head,int i,int j){
         a->next = temp;
         return;
     }
+
     node * parent1 = findAtPositionK(*head,i-1);
     node * parent2 = findAtPositionK(*head,j-1);
     node * a  = parent1->next;
@@ -209,13 +218,87 @@ void swapNode(node ** head,int i,int j){
      a->next = temp;
      parent2->next = a;
 }
+void bubbleSort(node** head){
+    int n = length(*head);
+    for(int i=0;i<n-1;i++){
+        for(int j=0;j<n-i-1;j++){
+            node *a = findAtPositionK(*head,j);
+            node *b = a->next;
+            if(a->data > b->data){
+                swapNode(head,j,j+1);
+            }
+        }
+    }
+}
+node * kthElementFromLast(node * head,int k){
+    static int i = k;
+    if(head==NULL){
+        return NULL;
+    }
+    node * it = kthElementFromLast(head->next,k);
+    if(it){
+        return it;
+    }
+    if(i==0){
+        return head;
+    }
+    i--;
+    return NULL;
+}
+node * mergeLL(node * head1,node * head2){
+    if(head1==NULL && head2==NULL){
+        return NULL;
+    }
+    if(head1==NULL){
+        return head2;
+    }
+    if(head2==NULL){
+        return head1;
+    }
+    node * head;
+    if(head1->data < head2->data){
+        head = head1;
+        head1 = head1->next;
+    }else{
+        head = head2;
+        head2 = head2->next;
+    }
+    node * it = head;
+    while(head1 && head2){
+        if(head1->data < head2->data){
+            it->next = head1;
+            head1 = head1->next;
+            it = it->next;
+        }else{
+            it->next = head2;
+            head2 = head2->next;
+            it = it->next;
+        }
+    }
+    if(head1){
+        it->next = head1;
+    }
+    else{
+        it->next = head2;
+    }
+    return head;
+}
 int main(){
-node * head = NULL;
+node * head1 = NULL;
+node * head2 = NULL;
 //print(head);
-createll2(head);
-print(head);
-swapNode(&head,0,1);
-print(head);
+createll2(head1);
+print(head1);
+createll2(head2);
+print(head2);
+node * head3 = mergeLL(head1,head2);
+print(head3);
+
+//bubbleSort(&head);
+//int n = 2;
+//node * it = kthElementFromLast(head,n);
+//cout<<it->data<<endl;
+//print(head);
 /*
 node * it1 = findRecursiveFront(head,4);
 cout<<endl;
