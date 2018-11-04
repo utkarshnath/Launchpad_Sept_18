@@ -171,12 +171,52 @@ node * findRecursiveLast(node * head,int value){
     }
     return NULL;
 }
-
+node * findAtPositionK(node *  head,int k){
+    while(k--){
+        head = head->next;
+    }
+    return head;
+}
+void swapNode(node ** head,int i,int j){
+    if(i==0){
+        node * parent = findAtPositionK(*head,j-1);
+        node * a = *head;
+        node * b = parent->next;
+        node * temp = b->next;
+        b->next = a->next;
+        a->next = temp;
+        parent->next = *head;
+        *head = b;
+        return;
+    }
+    if(j-i==1){
+        node * parent = findAtPositionK(*head,i-1);
+        node * a = parent->next;
+        node * b = a->next;
+        parent->next = b;
+        node * temp = b->next;
+        b->next = a;
+        a->next = temp;
+        return;
+    }
+    node * parent1 = findAtPositionK(*head,i-1);
+    node * parent2 = findAtPositionK(*head,j-1);
+    node * a  = parent1->next;
+    node * b = parent2->next;
+    parent1->next = b;
+    node * temp = b->next;
+     b->next = a->next;
+     a->next = temp;
+     parent2->next = a;
+}
 int main(){
 node * head = NULL;
 //print(head);
 createll2(head);
 print(head);
+swapNode(&head,0,1);
+print(head);
+/*
 node * it1 = findRecursiveFront(head,4);
 cout<<endl;
 node * it = findRecursiveLast(head,4);
