@@ -5,6 +5,7 @@ struct node{
     int data;
     node * left;
     node * right;
+    int depth;
     node(int data){
         this->data = data;
         left = right = NULL;
@@ -120,15 +121,11 @@ int countGreater(node * root,int x){
     return left+right;
 }
 pair<node *,int> maxPair(pair<node *,int> a,pair<node *,int> b){
-    pair<node *,int> p;
     if(a.second > b.second){
-        p.first = a.first;
-        p.second = a.second;
+        return a;
     }else{
-        p.first = b.first;
-        p.second = b.second;
+        return b;
     }
-    return p;
 }
 pair<node *,int> maxGroup(node * root){
     if(root==NULL){
@@ -166,7 +163,7 @@ node * maxGroup1(node * root){
         grpl+=left->left->data;
     }
     if(left->right){
-        grpr+=left->right->data;
+        grpl+=left->right->data;
     }
     int grpr = right->data;
     if(left->left){
@@ -190,14 +187,146 @@ node * maxGroup1(node * root){
         }
     }else{
         if(grpr>grp){
-            return right
+            return right;
         }else{
             return root;
         }
     }
 }
+int degree(node * root){
+    int c = 0;
+    if(root->left){
+        c++;
+    }
+    if(root->right){
+        c++;
+    }
+    return c;
+}
+
+void populate(node * root,int d){
+    if(root==NULL){
+        return;
+    }
+    root->depth = d;
+    populate(root->left,d+1);
+    populate(root->right,d+1);
+    return;
+}
+void printAtDepthK(node * root,int k){
+    queue<node *>q1;
+    queue<node *>q2;
+    q1.push(root);
+    while(k--){
+        if(q1.empty()){
+            while(!q2.empty()){
+                node * top = q2.front();
+                if(top->left){
+                    q1.push(top->left);
+                }
+                if(top->right){
+                    q1.push(top->right);
+                }
+                q2.pop();
+            }
+        }else{
+             while(!q1.empty()){
+                node * top = q1.front();
+                if(q1.front()->left){
+                    q2.push(q1.front()->left);
+                }
+                if(top->right){
+                    q2.push(top->right);
+                }
+                q1.pop();
+            }
+        }
+    }
+    while(!q1.empty()){
+        cout<<q1.front()->data<<" ";
+        q1.pop();
+    }
+    while(!q2.empty()){
+        cout<<q2.front()->data<<" ";
+        q2.pop();
+    }
+}
+int height(node * root){
+    if(!root){
+        return 0;
+    }
+    int left = height(root->left);
+    int right = height(root->right);
+    return max(left,right)+1;
+}
+int diameter(node * root){
+    if(root==NULL){
+        return 0;
+    }
+    int l = diameter(root->left);
+    int r = diameter(root->right);
+    int lh = height(root->left);
+    int rh = height(root->right);
+    return max(lh+rh+1,max(l,r));
+}
+pair<int,int> fastDiameter(node * root){
+    if(!root){
+        pair<int,int >p;
+        p.first = p.second = 0;
+        return p;
+    }
+    pair<int,int >l = fastDiameter(root->left);
+    pair<int,int >r = fastDiameter(root->right);
+    pair<int,int>p;
+    p.first = max(l.second+r.second+1,max(l.first,r.first));
+    p.second = max(l.second,r.second)+1;
+    return p;
+}
+bool findNode(node * root,int data){
+    if(!root){
+        return false;
+    }
+    if(root->data==data){
+        return true;
+    }
+    bool l = findNode(root->left,data);
+    bool r = findNode(root->right,data);
+    return l || r;
+
+}
+node * mirror(node * root){
+    if(!root){
+        return NULL;
+    }
+    node * temp = new node(root->data);
+    temp->right = mirror(root->left);
+    temp->left = mirror(root->right);
+    return temp;
+}
+int find(vector<int>v,int s,int e,int d){
+    for(int i=s;i<=e;i++){
+        if(v[i]==d){
+            return i;
+        }
+    }
+    return -1;
+}
+node * treeFromPreAndIn(vector<int>pre,int pstart,int pend,vector<int>in,int istart,int iend){
+    if(pstart>pend){
+        return NULL;
+    }
+    int rootData = pre[pstart];
+    int index = find(in,istart,iend,rootData);
+    int l = index - istart;
+    int r = iend - index;
+    node * root = new node(rootData);
+    root->left = treeFromPreAndIn(pre,pstart+1,pstart+l,in,istart,index-1);
+    root->right = treeFromPreAndIn(pre,pstart+l+1,pend,in,index+1,iend);
+    return root;
+}
 // 1 2 3 4 6 5 -1 -1 -1 7 8 -1 -1 -1 -1 -1 -1
 int main(){
+/*
 node * root = createBtree();
 preorder(root);
 cout<<endl;
@@ -211,4 +340,14 @@ cout<<nodeCount(root)<<endl;
 cout<<largestNode(root)<<endl;
 pair<node* ,int> p = maxGroup(root);
 cout<<p.first->data<<" "<<p.second<<endl;
+printAtDepthK(root,2);
+cout<<endl;
+cout<<diameter(root)<<endl;;
+*/
+vector<int>pre;
+pre.push_back(1);pre.push_back(2);pre.push_back(6);pre.push_back(3);pre.push_back(4);pre.push_back(5);
+vector<int >in;
+in.push_back(2);in.push_back(6);in.push_back(1);in.push_back(4);in.push_back(3);in.push_back(5);
+node * root = treeFromPreAndIn(pre,0,5,in,0,5);
+levelorder(root);
 }
