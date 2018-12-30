@@ -198,17 +198,79 @@ pair<bool,pair<int,int> > checkBst(node* root){
     p.second.second = max(right.second.second,root->data);
     return p;
 }
+node * removeElement(node * root,int element){
+    if(root==NULL){
+        return NULL;
+    }
+    if(root->data==element){
+        // 0 child
+        if(!root->left && !root->right){
+            delete root;
+            return NULL;
+        }
+
+        //1 child
+        if(!root->left && root->right){
+            node * it = root;
+            delete root;
+            return it->right;
+        }
+        if(root->left && !root->right){
+            node * it = root;
+            delete root;
+            return it->left;
+        }
+
+        //2 child
+        node * parent = root;
+        node * it = root->right;
+        if(it->left==NULL){
+            it->left = root->left;
+            delete root;
+            return it;
+        }
+        while(it->left!=NULL){
+            parent = it;
+            it = it->left;
+        }
+        parent->left = it->right;
+        it->left = root->left;
+
+        if(root->right!=it){
+            it->right = root->right;
+        }
+        delete root;
+        return it;
+    }
+
+    if(root->data < element){
+        root->right = removeElement(root->right,element);
+    }else{
+        root->left = removeElement(root->left,element);
+    }
+    return root;
+}
 
 int main(){
 node * root = NULL;
 addElement(&root,5);
 addElement(&root,3);addElement(&root,8);
 addElement(&root,1);
+addElement(&root,4);
 addElement(&root,7);
 addElement(&root,10);
-addElement(&root,4);
-addElement(&root,5);
+addElement(&root,9);addElement(&root,11);
+addElement(&root,10);
 levelorder(root);
-node * head = sortedLL(root);
-printLL(head);
+cout<<endl;
+
+//node * head = sortedLL(root);
+//printLL(head);
+
+root = removeElement(root,8);
+levelorder(root);
+cout<<endl;
+root = removeElement(root,3);
+levelorder(root);
+cout<<endl;
 }
