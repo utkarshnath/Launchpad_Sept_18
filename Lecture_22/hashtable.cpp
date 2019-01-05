@@ -10,6 +10,11 @@ struct node{
         this->key = key;
         this->value = value;
     }
+    ~node(){
+        if(next!=NULL){
+            delete next;
+        }
+    }
 };
 template <typename T>
 class hashtable{
@@ -28,6 +33,25 @@ class hashtable{
        }
        return ans;
     }
+    void rehash(){
+        node <T> ** oldtable = table;
+        int oldTs = ts;
+        ts = 2*ts;
+        cs = 0;
+        table = new node<T> * [ts];
+        for(int i=0;i<ts;i++){
+            table[i] = NULL;
+        }
+        for(int i=0;i<oldTs;i++){
+            node<T> * head = oldtable[i];
+            while(head){
+                insert(head->key,head->value);
+                head = head->next;
+            }
+            delete oldtable[i];
+        }
+        delete [] oldtable;
+    }
 public:
     hashtable(int size=7){
         ts = size;
@@ -43,6 +67,10 @@ public:
         temp->next = table[index];
         table[index] = temp;
         cs++;
+        float lf = (float)cs/ts;
+        if(lf>0.7){
+            rehash();
+        }
     }
     T* find(string key){
         int index = hashFn(key);
@@ -64,11 +92,13 @@ public:
                 if(parent==NULL){
                     table[index] = head->next;
                     cs--;
+                    //head->next = NULL;
                     delete head;
                     return;
                 }
                 parent->next = head->next;
                 cs--;
+                head->next = NULL;
                 delete head;
                 return;
             }
@@ -95,10 +125,13 @@ h.insert("abc",1);
 h.insert("wefwe",1);
 h.insert("dsvd",1);
 h.insert("asn",1);
+h.print();
+cout<<endl;
 h.insert("efe",1);
 h.insert("vdd",1);
 h.insert("eeq",1);
 h.print();
+cout<<endl;
 h.erase("eeq");
 h.print();
 
