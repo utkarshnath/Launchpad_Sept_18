@@ -1,6 +1,7 @@
 #include<iostream>
 #include<list>
 #include<queue>
+#include<stack>
 using namespace std;
 class graph{
     int V;  // count of vertex
@@ -53,7 +54,7 @@ public:
             int top = q.front();
             q.pop();
             list<int>::iterator it;
-            for(it =l[top].begin();it!=l[top].end;it++){
+            for(it =l[top].begin();it!=l[top].end();it++){
                 if(visited[*it]==false){
                     dist[*it] = dist[top] + 1;
                     q.push(*it);
@@ -81,6 +82,30 @@ public:
             dfsDriver(i,visited);
         }
     }
+
+    void topoDriver(int vertex,bool visited[100],stack<int>&s){
+        if(visited[vertex]){
+            return;
+        }
+        visited[vertex] = true;
+        list<int>:: iterator it;
+        for(it=l[vertex].begin();it!=l[vertex].end();it++){
+            int v = *it;
+            topoDriver(v,visited,s);
+        }
+        s.push(vertex);
+    }
+    void topologicalSort(){
+        bool visited[100] = {0};
+        stack<int>s;
+        for(int i=0;i<V;i++){
+            topoDriver(i,visited,s);
+        }
+        while(!s.empty()){
+            cout<<s.top();
+            s.pop();
+        }
+    }
     void print(){
         for(int i=0;i<V;i++){
             cout<<i<<" => ";
@@ -91,20 +116,19 @@ public:
             cout<<endl;
         }
     }
+
 };
 int main(){
 graph g(7);
-g.addEdge(0,1);
-g.addEdge(0,2);
-g.addEdge(0,3);
-g.addEdge(1,4);
-g.addEdge(2,3);
-g.addEdge(2,4);
-g.addEdge(3,4);
-g.addEdge(5,6);
+g.addEdge(0,1,0);
+g.addEdge(0,2,0);
+g.addEdge(0,3,0);
+g.addEdge(1,4,0);
+g.addEdge(2,3,0);
+g.addEdge(2,4,0);
+g.addEdge(3,4,0);
+g.addEdge(5,6,0);
 
-g.bfs(0);
-cout<<endl;
-g.dfs();
+g.topologicalSort();
 //g.print();
 }
