@@ -106,6 +106,38 @@ public:
             s.pop();
         }
     }
+
+    bool cycleDriver(int vertex,bool visited[100],int parent){
+        if(visited[vertex]){
+            return true;
+        }
+        visited[vertex] = true;
+        list<int>:: iterator it;
+        for(it=l[vertex].begin();it!=l[vertex].end();it++){
+            int v = *it;
+            if(v!=parent){
+                bool cycle = cycleDriver(v,visited,vertex);
+                if(cycle){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool isCycle(){
+        bool visited[100] = {0};
+        for(int i=0;i<V;i++){
+            if(!visited[i]){
+                bool cycle = cycleDriver(i,visited,i);
+                    if(cycle){
+                        return true;
+                    }
+                }
+            }
+        return false;
+    }
+
     void print(){
         for(int i=0;i<V;i++){
             cout<<i<<" => ";
