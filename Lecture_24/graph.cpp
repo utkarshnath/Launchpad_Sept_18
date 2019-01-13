@@ -138,6 +138,38 @@ public:
         return false;
     }
 
+bool cycleDriverDir(int vertex,bool visited[]bool recstack[]){
+    if(visited[vertex]==false){
+        visited[vertex] = true;
+        recstack[vertex] = true;
+        ist<int>:: iterator it;
+        for(it=l[vertex].begin();it!=l[vertex].end();it++){
+            int v = *it;
+            if(!visited[v] && cycleDriverDir(v,visited,recstack)){
+                return true;
+            }
+            if(recstack[v]){
+                return true;
+            }
+        }
+        recstack[vertex] = false;
+        return false;
+    }
+}
+
+bool isCycleDir(){
+    bool visited[100] = {0};
+    bool recstack[100] = {0};
+    for(int i=0;i<V;i++){
+        if(cycleDriverDir(i,visited,recstack)){
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
     void print(){
         for(int i=0;i<V;i++){
             cout<<i<<" => ";
